@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard | Lifecare Hospital{% endblock %}
+{% block content %}
+<div class="row g-4 mb-4">
+    <div class="col-lg-8">
+        <div class="hero-panel p-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+                <div>
+                    <span class="hero-chip">Patient Dashboard</span>
+                    <h1 class="h2 fw-bold mt-3 mb-2">Hello, {{ (user.full_name or user.username) if user else 'Patient' }}</h1>
+                    <p class="text-muted-custom mb-0">Manage your hospital profile, add money to your balance, and make protected payments for medical services.</p>
+                </div>
+                <div class="balance-pill">
+                    <span>Available Balance</span>
+                    <strong>₹{{ '%.2f'|format(user.balance if user else 0) }}</strong>
+                </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4"><div class="info-tile h-100 info-pair"><span>Username :</span><strong class="value-wrap">{{ user.username if user else 'N/A' }}</strong></div></div>
+                <div class="col-md-4"><div class="info-tile h-100 info-pair"><span>City :</span><strong class="value-wrap">{{ (user.city or 'Not added') if user else 'Not added' }}</strong></div></div>
+                <div class="col-md-4"><div class="info-tile h-100 info-pair"><span>Email :</span><strong class="value-wrap">{{ (user.email or 'Not added') if user else 'Not added' }}</strong></div></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="form-card p-4 h-100">
+            <h2 class="h4 fw-bold mb-3">Add Money to Balance</h2>
+            <p class="text-muted-custom">Type the amount you want to add. It will be stored directly in your current balance.</p>
+            <form method="post" action="{{ url_for('add_money') }}">
+                <div class="mb-3">
+                    <label class="form-label">Amount (₹)</label>
+                    <input type="number" class="form-control" step="0.01" min="1" name="amount" placeholder="Enter amount to add" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Add Money</button>
+            </form>
+            <div class="mini-note mt-3">Example: Enter ₹5000 and your balance increases by ₹5000.</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="form-card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <h2 class="h4 fw-bold mb-0">Pay for Hospital Services</h2>
+                <a href="{{ url_for('profile') }}" class="btn btn-soft btn-sm">View Profile</a>
+            </div>
+            <form method="post" action="{{ url_for('make_payment') }}">
+                <div class="mb-3">
+                    <label class="form-label">Service Type</label>
+                    <select class="form-select" name="service_type" id="serviceType" required>
+                        <option value="" selected disabled>Select a service</option>
+                        {% for service, price in services.items() %}
+                        <option value="{{ service }}" data-price="{{ price }}">{{ service }} (Suggested ₹{{ price }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Amount (₹)</label>
+                    <input type="number" class="form-control" step="0.01" min="1" name="amount" id="amountInput" placeholder="Enter amount" required>
+                </div>
+                <div class="preview-box mb-3" id="securityPreview">Security preview will appear here based on payment amount.</div>
+                <button type="submit" class="btn btn-primary">Pay Securely</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="form-card p-4 h-100">
+            <h2 class="h4 fw-bold mb-3">Recent Payments</h2>
+            {% if recent_payments %}
+                <div class="list-group list-group-flush">
+                    {% for payment in recent_payments %}
+                    <a href="{{ url_for('payment_detail', payment_id=payment.id) }}" class="list-group-item list-group-item-action payment-item">
+                        <div class="d-flex justify-content-between align-items-start gap-2">
+                            <div>
+                                <strong>{{ payment.service_type }}</strong>
+                                <div class="small text-muted-custom">{{ payment.created_at[:19].replace('T', ' ') }}</div>
+                            </div>
+                            <span class="fw-bold">₹{{ '%.2f'|format(payment.amount) }}</span>
+                        </div>
+                        <div class="small mt-2 badge text-bg-light border">{{ payment.security_mode }}</div>
+                    </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted-custom mb-0">No payments made yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const amountInput = document.getElementById('amountInput');
+const preview = document.getElementById('securityPreview');
+const serviceType = document.getElementById('serviceType');
+
+function updatePreview() {
+    const amount = parseFloat(amountInput.value || '0');
+    if (!amount || amount <= 0) {
+        preview.textContent = 'Security preview will appear here based on payment amount.';
+        return;
+    }
+    if (amount <= 2000) {
+        preview.innerHTML = '<strong>Applied:</strong> SHA-256 Message Digest<br><span class="text-muted-custom">Purpose: Integrity of low-value transaction data.</span>';
+    } else if (amount <= 5000) {
+        preview.innerHTML = '<strong>Applied:</strong> RSA Digital Signature<br><span class="text-muted-custom">Purpose: Authentication, integrity, and non-repudiation.</span>';
+    } else {
+        preview.innerHTML = '<strong>Applied:</strong> Digital Signature + AES-GCM Encryption<br><span class="text-muted-custom">Purpose: Confidentiality, integrity, and strong protection for high-value payments.</span>';
+    }
+}
+
+serviceType?.addEventListener('change', () => {
+    const selected = serviceType.options[serviceType.selectedIndex];
+    const price = selected.getAttribute('data-price');
+    if (price && !amountInput.value) amountInput.value = price;
+    updatePreview();
+});
+amountInput?.addEventListener('input', updatePreview);
+</script>
+{% endblock %}

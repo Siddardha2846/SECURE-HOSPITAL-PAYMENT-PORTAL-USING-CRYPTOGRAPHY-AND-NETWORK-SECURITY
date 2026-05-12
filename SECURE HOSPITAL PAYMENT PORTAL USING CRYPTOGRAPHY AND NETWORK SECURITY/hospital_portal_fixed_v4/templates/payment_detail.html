@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Payment Detail | Lifecare Hospital{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="form-card p-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <h1 class="h3 fw-bold mb-0">Payment Detail #{{ payment.id }}</h1>
+                <a href="{{ url_for('history') }}" class="btn btn-soft btn-sm">Back to History</a>
+            </div>
+            <div class="row g-3 mb-4">
+                <div class="col-md-4"><div class="info-tile"><span>Service</span><strong>{{ payment.service_type }}</strong></div></div>
+                <div class="col-md-4"><div class="info-tile"><span>Amount</span><strong>₹{{ '%.2f'|format(payment.amount) }}</strong></div></div>
+                <div class="col-md-4"><div class="info-tile"><span>Security Mode</span><strong>{{ payment.security_mode }}</strong></div></div>
+            </div>
+            <div class="info-tile mb-3">
+                <span>Created At</span>
+                <strong>{{ payment.created_at[:19].replace('T', ' ') }}</strong>
+            </div>
+            <h2 class="h5 fw-bold mt-4">Stored Security Data</h2>
+            <pre class="code-box">{{ payment.security_data }}</pre>
+        </div>
+    </div>
+</div>
+{% endblock %}

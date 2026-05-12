@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Profile | Lifecare Hospital{% endblock %}
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="form-card p-4 h-100 text-center">
+            <div class="profile-avatar mx-auto mb-3">{{ (user.full_name or user.username)[0]|upper }}</div>
+            <h1 class="h3 fw-bold mb-1">{{ user.full_name or user.username }}</h1>
+            <p class="text-muted-custom mb-3">Patient ID : #{{ user.id }}</p>
+            <div class="balance-pill compact mx-auto">
+                <span>Current Balance</span>
+                <strong>₹{{ '%.2f'|format(user.balance) }}</strong>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="form-card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <h2 class="h4 fw-bold mb-0">Patient Profile</h2>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-soft btn-sm">Back to Dashboard</a>
+            </div>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6"><div class="info-tile h-100 info-pair"><span>Username :</span><strong>{{ user.username }}</strong></div></div>
+                <div class="col-md-6"><div class="info-tile h-100 info-pair"><span>Full Name :</span><strong>{{ user.full_name or 'Not added' }}</strong></div></div>
+                <div class="col-md-6"><div class="info-tile h-100 info-pair"><span>Email :</span><strong>{{ user.email or 'Not added' }}</strong></div></div>
+                <div class="col-md-6"><div class="info-tile h-100 info-pair"><span>Phone :</span><strong>{{ user.phone or 'Not added' }}</strong></div></div>
+                <div class="col-md-6"><div class="info-tile h-100 info-pair"><span>Age :</span><strong>{{ user.age or 'Not added' }}</strong></div></div>
+                <div class="col-md-6"><div class="info-tile h-100 info-pair"><span>City :</span><strong>{{ user.city or 'Not added' }}</strong></div></div>
+                <div class="col-md-6"><div class="info-tile h-100 info-pair"><span>Account Created :</span><strong>{{ user.created_at[:10] if user.created_at else 'N/A' }}</strong></div></div>
+                <div class="col-md-6"><div class="info-tile stat-tile info-pair"><span>Total Payments :</span><strong>{{ payment_stats.total_payments }}</strong></div></div>
+                <div class="col-md-12"><div class="info-tile stat-tile info-pair"><span>Total Amount Spent :</span><strong>₹{{ '%.2f'|format(payment_stats.total_spent) }}</strong></div></div>
+            </div>
+
+            <div class="edit-profile-box p-3 p-md-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                    <h3 class="h5 fw-bold mb-0">Edit Profile</h3>
+                    <span class="text-muted-custom small">Update your patient details here</span>
+                </div>
+                <form method="post" action="{{ url_for('profile') }}">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" name="full_name" value="{{ user.full_name or '' }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" value="{{ user.email or '' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phone</label>
+                            <input type="text" class="form-control" name="phone" value="{{ user.phone or '' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Age</label>
+                            <input type="number" class="form-control" name="age" value="{{ user.age or '' }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">City</label>
+                            <input type="text" class="form-control" name="city" value="{{ user.city or '' }}">
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary">Save Profile Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}Home | Lifecare Multispeciality Hospital{% endblock %}
+{% block content %}
+<section class="hospital-hero mb-5">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-7">
+            <div class="hero-panel p-4 p-md-5">
+                <span class="hero-chip">Trusted Multispeciality Care</span>
+                {% if user %}
+                <h1 class="display-5 fw-bold mt-3 mb-3">Welcome, {{ user.full_name or user.username }}</h1>
+                <p class="lead text-muted-custom mb-4">Your patient portal is active. View your profile, manage balance, and make secure payments for hospital services from one place.</p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg">Go to Dashboard</a>
+                    <a href="{{ url_for('profile') }}" class="btn btn-soft btn-lg">View Profile</a>
+                </div>
+                <div class="welcome-strip mt-4">
+                    <div><span class="welcome-label">Patient Name :</span> <strong>{{ user.full_name or user.username }}</strong></div>
+                    <div><span class="welcome-label">Username :</span> <strong>{{ user.username }}</strong></div>
+                    <div><span class="welcome-label">Balance :</span> <strong>₹{{ '%.2f'|format(user.balance) }}</strong></div>
+                </div>
+                {% else %}
+                <h1 class="display-5 fw-bold mt-3 mb-3">Modern hospital website with secure digital payments and patient access.</h1>
+                <p class="lead text-muted-custom mb-4">Book appointments, manage medical service payments, and view your protected payment history through a clean hospital portal secured with OTP, SHA-256, RSA, and AES-GCM.</p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">Patient Login</a>
+                    <a href="{{ url_for('register') }}" class="btn btn-soft btn-lg">Create Account</a>
+                </div>
+                {% endif %}
+                <div class="row g-3 mt-3">
+                    <div class="col-sm-4"><div class="mini-stat"><strong>24/7</strong><span>Emergency support</span></div></div>
+                    <div class="col-sm-4"><div class="mini-stat"><strong>50+</strong><span>Doctors & specialists</span></div></div>
+                    <div class="col-sm-4"><div class="mini-stat"><strong>100%</strong><span>Protected transactions</span></div></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="hero-side-card p-4 h-100">
+                <h3 class="fw-bold mb-3">Secure Billing Tiers</h3>
+                <div class="service-badge-row mb-3"><span class="service-dot green"></span><strong>₹1–₹2000</strong><span class="text-muted-custom">SHA-256 integrity check</span></div>
+                <div class="service-badge-row mb-3"><span class="service-dot blue"></span><strong>₹2001–₹5000</strong><span class="text-muted-custom">RSA digital signature</span></div>
+                <div class="service-badge-row"><span class="service-dot purple"></span><strong>Above ₹5000</strong><span class="text-muted-custom">Signature + AES-GCM encryption</span></div>
+                <hr>
+                <p class="mb-0 text-muted-custom">This hospital website demonstrates how real healthcare billing systems can protect transaction data, authenticate patients, and prevent tampering.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-5">
+    <div class="d-flex justify-content-between align-items-end flex-wrap gap-2 mb-3">
+        <div>
+            <h2 class="fw-bold mb-1">Our key services</h2>
+            <p class="text-muted-custom mb-0">Designed like a real hospital home page with service highlights.</p>
+        </div>
+    </div>
+    <div class="row g-4">
+        {% for feature in features %}
+        <div class="col-md-6 col-xl-3">
+            <div class="service-card h-100 p-4">
+                <div class="service-icon mb-3">{{ feature.icon }}</div>
+                <h5 class="fw-bold">{{ feature.title }}</h5>
+                <p class="text-muted-custom mb-0">{{ feature.text }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section>
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="info-block p-4">
+                <h3 class="fw-bold mb-3">Why this website is useful</h3>
+                <ul class="check-list mb-0">
+                    <li>Lets patients log in securely with password and OTP.</li>
+                    <li>Helps manage hospital service payments in one place.</li>
+                    <li>Applies different cryptographic protection based on payment value.</li>
+                    <li>Stores balance, profile information, and payment history for demonstration.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="info-block p-4 h-100">
+                <h3 class="fw-bold mb-3">Suggested services</h3>
+                {% for service, price in services.items() %}
+                <div class="d-flex justify-content-between border-bottom py-2 small-gap">
+                    <span>{{ service }}</span>
+                    <strong>₹{{ price }}</strong>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

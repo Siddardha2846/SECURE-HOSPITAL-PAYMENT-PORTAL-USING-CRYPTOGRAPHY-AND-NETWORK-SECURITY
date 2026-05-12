@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Payment History | Lifecare Hospital{% endblock %}
+{% block content %}
+<div class="form-card p-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+        <h1 class="h3 fw-bold mb-0">Payment History</h1>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-soft btn-sm">Back to Dashboard</a>
+    </div>
+
+    {% if payments %}
+    <div class="table-responsive">
+        <table class="table custom-table align-middle">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Service</th>
+                    <th>Amount</th>
+                    <th>Security Mode</th>
+                    <th>Timestamp</th>
+                    <th>View</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payments %}
+                <tr>
+                    <td>#{{ payment.id }}</td>
+                    <td>{{ payment.service_type }}</td>
+                    <td>₹{{ '%.2f'|format(payment.amount) }}</td>
+                    <td><span class="badge rounded-pill soft-badge">{{ payment.security_mode }}</span></td>
+                    <td>{{ payment.created_at[:19].replace('T', ' ') }}</td>
+                    <td><a class="btn btn-sm btn-primary" href="{{ url_for('payment_detail', payment_id=payment.id) }}">Details</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-muted-custom mb-0">No payment records available.</p>
+    {% endif %}
+</div>
+{% endblock %}

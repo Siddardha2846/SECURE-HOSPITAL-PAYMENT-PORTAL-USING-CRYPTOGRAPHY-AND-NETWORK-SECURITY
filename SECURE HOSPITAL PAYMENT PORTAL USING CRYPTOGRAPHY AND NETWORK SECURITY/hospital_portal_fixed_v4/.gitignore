@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+hospital.db
+keys/private_key.pem
